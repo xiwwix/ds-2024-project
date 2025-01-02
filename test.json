@@ -1,0 +1,19 @@
+{
+    "members": [
+        {"id": "1", "name": "Alice"},
+        {"id": "2", "name": "Bob"},
+        {"id": "3", "name": "Charlie"},
+        {"id": "4", "name": "Diana"},
+        {"id": "5", "name": "Eve"},
+        {"id": "6", "name": "Frank"}
+    ],
+    "relationships": [
+        {"source": "1", "target": "2", "weight": 3},
+        {"source": "1", "target": "3", "weight": 2},
+        {"source": "1", "target": "4", "weight": 4},
+        {"source": "2", "target": "5", "weight": 5},
+        {"source": "3", "target": "5", "weight": 5},
+        {"source": "4", "target": "5", "weight": 5},
+        {"source": "5", "target": "6", "weight": 1}
+    ]
+}

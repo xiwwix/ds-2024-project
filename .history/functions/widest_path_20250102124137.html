@@ -1,0 +1,100 @@
+<div id="query-content">
+    <h3>信息扩散模拟</h3>
+    <label for="start-member">起点:</label>
+    <input type="text" id="start-member" placeholder="输入起点成员">
+    <label for="spread-time">传播时间:</label>
+    <input type="number" id="spread-time" placeholder="输入传播时间">
+
+    <div id="button-container" style="display: flex; gap: 10px; margin-top: 10px;">
+        <button id="simulate-btn">模拟</button>
+        <button id="next-step-btn">下一步</button>
+        <button id="reset-btn">重置</button>
+    </div>
+</div>
+<div id="result-content">
+    <h3>数据分析结果：</h3>
+    <div id="result">在此显示扩散模拟结果</div>
+</div>
+
+<script src="functions/simulate_ic_spread.js"></script>
+
+<script>
+    (function () {
+        const graphData = window.graphData;
+
+        if (!graphData || !graphData.nodes || !graphData.edges) {
+            document.getElementById('result').innerHTML = '图数据尚未加载，请返回上传数据。';
+            return;
+        }
+
+        const startInput = document.getElementById('start-member');
+        const timeInput = document.getElementById('spread-time');
+        const resultDiv = document.getElementById('result');
+
+        let currentTime = 0;
+        let activatedNodes = new Set();
+        let activeNodes = [];
+        let startNodeId = null;
+
+        document.getElementById('simulate-btn').addEventListener('click', () => {
+            console.log("Simulate button clicked!");
+
+            const startMember = startInput.value.trim();
+            const spreadTime = parseInt(timeInput.value.trim());
+
+            if (!startMember || isNaN(spreadTime)) {
+                resultDiv.innerHTML = '请输入有效的起点和传播时间。';
+                console.warn("无效输入");
+                return;
+            }
+
+            const startNode = graphData.nodes.find(node => node.data.label === startMember);
+            if (!startNode) {
+                resultDiv.innerHTML = '找不到指定的起点，请检查输入内容。';
+                console.warn("起点未找到");
+                return;
+            }
+
+            startNodeId = startNode.data.id;
+            currentTime = spreadTime;
+
+            window.resetSimulation();
+            const result = window.simulateICSpread(startNodeId, spreadTime, graphData);
+            updateResultOutput(result, graphData);
+        });
+
+        document.getElementById('next-step-btn').addEventListener('click', () => {
+            console.log("Next step button clicked!");
+
+            if (!startNodeId) {
+                resultDiv.innerHTML = '请先点击模拟按钮，进行初始模拟！';
+                return;
+            }
+
+            currentTime++;
+            timeInput.value = currentTime;
+
+            const result = window.simulateICSpread(startNodeId, 1, graphData);
+            updateResultOutput(result, graphData);
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+
+            currentTime = 0;
+            timeInput.value = ''; 
+            startInput.value = '';
+            window.resetSimulation();
+
+            resultDiv.innerHTML = '扩散过程已重设，请重新输入参数开始模拟！';
+        });
+
+        function updateResultOutput(activatedNodes, graphData) {
+            const nodeLabels = Array.from(activatedNodes).map(id => {
+                const node = graphData.nodes.find(n => n.data.id === id);
+                return node ? node.data.label : id;
+            });
+
+            resultDiv.innerHTML = `第${currentTime}步传播节点: ${nodeLabels.join(', ')}`;
+        }
+    })();
+</script>

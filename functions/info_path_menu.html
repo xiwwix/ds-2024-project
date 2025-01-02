@@ -1,0 +1,13 @@
+
+
+<script type="module">
+    import { loadSection } from './action.js';
+
+    document.getElementById('shortest-path').addEventListener('click', () => {
+        loadSection('shortest_path.html', 'query-section', 'result-section');
+    });
+
+    document.getElementById('widest-path').addEventListener('click', () => {
+        loadSection('widest_path.html', 'query-section', 'result-section');
+    });
+</script>

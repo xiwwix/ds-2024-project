@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Graph Query</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.22.0/dist/cytoscape.min.js"></script>
+
+</head>
+<body>
+    <div id="main-container">
+        <div id="visualization">
+            <div id="cy"></div>
+            <div id="upload-section">
+                <input type="file" id="fileInput" accept=".json"/>
+            </div>
+        </div>
+
+        <div id="divider"></div>
+
+        <div id="controls">
+            <div id="menu-bar">
+                <div class="menu-item" id="info-path">信息传播途径
+                    <div class="dropdown" id="info-path-dropdown">
+                        <div class="dropdown-item" id="shortest-path">最短传播</div>
+                        <div class="dropdown-item" id="widest-path">最广传播</div>
+                    </div>
+                </div>
+                <div class="menu-item" id="key-person">关键人物
+                </div>
+                <div class="menu-item" id="visualization-options">可视化选项</div>
+                <div class="menu-item" id="data-management">数据管理</div>
+            </div>
+
+            <div id="query-section">
+                <h3>功能介绍</h3>
+                <ul>
+                    <li><b>最短传播路径：</b> 查找两节点之间传播距离最短的路径。</li>
+                    <li><b>单源传播模拟：</b> 查找从起点出发，给定传播时间内能覆盖的节点。</li>
+                    <li><b>度中心性：</b> 衡量节点直接连接的边数，显示节点在网络中的重要性。</li>
+                    <li><b>介数中心性：</b> 衡量节点处于其他节点路径中的重要程度，分析信息流关键节点。</li>
+                    <li><b>割点：</b> 找到删除后会导致网络分裂的关键节点。</li>
+                    <li><b>可视化选项：</b> 控制节点颜色、是否显示序号等可视化设置。</li>
+                    <li><b>数据管理：</b> 管理和上传新的数据集。</li>
+                </ul>
+            </div>
+            <div id="result-section">
+                <h3>查询结果</h3>
+                <div id="result">在此显示数据分析结果</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 普通脚本（不再用 type="module"），全局加载 -->
+    <script src="./action.js"></script>
+    <script src="./upload_data.js"></script>
+
+    <script>
+        // ============= 初始化部分 =============
+        const divider = document.getElementById('divider');
+        const visualization = document.getElementById('visualization');
+        const controls = document.getElementById('controls');
+        const fileInput = document.getElementById('fileInput');
+
+        // 初始化 cytoscape
+        const cy = cytoscape({
+            container: document.getElementById('cy'),
+            elements: [],
+            style: [
+                {
+                    selector: 'node',
+                    style: {
+                        'background-color': 'rgb(255, 205, 113)',
+                        'label': 'data(label)',
+                        'width': '30px',
+                        'height': '30px'
+                    }
+                },
+                {
+                    selector: 'edge',
+                    style: {
+                        'width': 3,
+                        'line-color': '#ddd',
+                        'label': 'data(weight)',
+                        'target-arrow-shape': 'triangle',
+                        'target-arrow-color': '#ddd',
+                        'arrow-scale': 1.5
+                    }
+                }
+            ],
+            layout: {
+                name: 'breadthfirst',
+                directed: true,
+                spacingFactor: 1.5,
+                avoidOverlap: true
+            }
+        });
+
+        // 全局 graphData
+        const graphData = { nodes: [], edges: [] };
+        window.graphData = graphData;
+        window.cy = cy;
+
+        // 使分隔线可拖拽
+        if (window.enableDragResize) {
+            window.enableDragResize(divider, visualization, controls);
+        }
+
+        // 文件上传逻辑
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file && file.name.endsWith('.json')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = JSON.parse(e.target.result);
+                    if (window.parseAndDrawGraph) {
+                        window.parseAndDrawGraph(content, cy, graphData);
+                    }
+                };
+                reader.readAsText(file);
+            } else {
+                alert('请上传有效的 JSON 文件。');
+            }
+        });
+
+        // ============= 菜单点击，加载相应功能页面 =============
+        document.getElementById('shortest-path').addEventListener('click', () => {
+            window.loadSection('functions/shortest_path.html', 'query-section', 'result-section');
+        });
+        document.getElementById('widest-path').addEventListener('click', () => {
+            loadSection('functions/widest_path.html', 'query-section', 'result-section');
+        });
+        document.getElementById('key-person').addEventListener('click', () => {
+            window.loadSection('functions/key_person.html', 'query-section', 'result-section');
+        });
+        document.getElementById('visualization-options').addEventListener('click', () => {
+            window.loadSection('visualization_options.html', 'query-section', 'result-section', () => {
+                initializeVisualizationOptions(); // 加载后初始化开关和颜色选项
+            });
+        });
+        document.getElementById('data-management').addEventListener('click', () => {
+    // 加载 data_management.html 并动态引入 data_management.js
+    window.loadSection(
+        'functions/data_management.html', // HTML 文件路径
+        'query-section',
+        'result-section',
+        './functions/data_management.js' // JS 文件路径
+    );
+});
+
+    </script>
+</body>
+</html>

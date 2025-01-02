@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>最短传播路径示例</title>
+</head>
+<body>
+    <div id="query-content">
+        <h3>最短传播路径</h3>
+        <label for="start-member">起点:</label>
+        <input type="text" id="start-member" placeholder="输入起点成员">
+        <label for="end-member">终点:</label>
+        <input type="text" id="end-member" placeholder="输入终点成员">
+        <button id="query-btn">查询</button>
+    </div>
+    <div id="result-content">
+        <h3>查询结果</h3>
+        <div id="result">在此显示最短传播路径结果</div>
+    </div>
+
+    <!-- 使用相对于 index.html 的正确路径 -->
+    <script src="functions/find_shortest_path.js"></script>
+
+    <script>
+        // 确认脚本加载
+        console.log("Testing: Script loaded (shortest_path.html)");
+
+        // 立即执行初始化代码
+        (function() {
+            console.log("Initialization code running (shortest_path.html)");
+
+            // 使用全局 graphData
+            const graphData = window.graphData;
+
+            if (!graphData || !graphData.nodes || !graphData.edges) {
+                console.error('Graph Data is not available:', graphData);
+                document.getElementById('result').innerHTML = '图数据尚未加载，请返回上传数据。';
+                return;
+            }
+            console.log("Graph Data:", graphData);
+
+            const startInput = document.getElementById('start-member');
+            const endInput = document.getElementById('end-member');
+            const resultDiv = document.getElementById('result');
+
+            document.getElementById('query-btn').addEventListener('click', () => {
+                console.log("Query button clicked");
+
+                const startMember = startInput.value.trim();
+                const endMember = endInput.value.trim();
+
+                console.log("Start Member:", startMember);
+                console.log("End Member:", endMember);
+
+                if (!startMember || !endMember) {
+                    resultDiv.innerHTML = '请输入有效的起点和终点。';
+                    return;
+                }
+
+                // 在 graphData 里查找对应 node
+                const startNode = graphData.nodes.find(node => node.data.label === startMember);
+                const endNode = graphData.nodes.find(node => node.data.label === endMember);
+
+                console.log("Start Node:", startNode);
+                console.log("End Node:", endNode);
+
+                if (!startNode || !endNode) {
+                    resultDiv.innerHTML = '找不到指定的起点或终点。';
+                    return;
+                }
+
+                // 调用全局的 BFS 函数
+                const result = window.findShortestPath(startNode.data.id, endNode.data.id, graphData);
+
+                console.log("Shortest Path Result:", result);
+
+                if (!result || !result.path || result.path.length === 0) {
+                    resultDiv.innerHTML = '无法连接起点和终点。';
+                } else {
+                    // 将 ID 转成可读的 label
+                    const pathLabels = result.path.map(id => {
+                        const n = graphData.nodes.find(node => node.data.id === id);
+                        return n ? n.data.label : id;
+                    });
+
+                    resultDiv.innerHTML = `
+                        最短路径代价: ${result.cost}<br/>
+                        具体路径: ${pathLabels.join(' -> ')}
+                    `;
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

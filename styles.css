@@ -1,0 +1,294 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+#main-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+}
+
+#visualization {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+    min-width: 300px;
+    border-right: 1px solid #ccc;
+}
+
+#cy {
+    flex: 1;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    overflow: auto;
+}
+
+#upload-section {
+    margin: 10px 0;
+    align-self: center;
+}
+
+#divider {
+    width: 5px;
+    background-color: #ccc;
+    cursor: col-resize;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+#controls {
+    flex: 1;
+    min-width: 200px;
+    background-color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+#menu-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #e0e0e0;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.menu-item {
+    position: relative;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.menu-item:hover {
+    background-color: #ccc;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    z-index: 10;
+    width: 150px;
+}
+
+.menu-item:hover .dropdown {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown-item:hover {
+    background-color: #ccc;
+}
+
+#result-section {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+}
+
+label {
+    margin-right: 10px;
+}
+
+#query-section, #result-section {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    margin-top: 10px;
+}
+
+input {
+    padding: 5px;
+    margin: 5px;
+    width: 100%;
+}
+
+button {
+    padding: 10px;
+    margin: 5px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: calc(100% - 2px);
+    box-sizing: border-box;
+}
+
+.autocomplete-item {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.autocomplete-item:hover {
+    background-color: #ddd;
+}
+
+#result-content {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    margin-top: 10px;
+}
+
+.node-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+}
+
+.option-row {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.option-label {
+    font-size: 16px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.color-box-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.color-box {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #aaa;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.color-box.selected {
+    border: 3px solid black;
+}
+
+.btn {
+    margin-left: 0px;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.custom-button {
+    padding: 8px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    display: inline-block;
+    text-align: center;
+}
+
+.custom-button:hover {
+    background-color: #218838;
+}
+
+#file-name {
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+#upload-status {
+    margin-top: 20px;
+    font-size: 14px;
+}

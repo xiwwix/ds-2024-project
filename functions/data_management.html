@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>数据管理</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="query-content">
+        <h3>数据管理</h3>
+        <p>上传数据，格式化为符合要求的 JSON 格式。</p>
+
+        <label for="upload-data" class="custom-button">选择文件</label>
+        <input type="file" id="upload-data" accept=".csv" style="display: none;">
+        <span id="file-name">未选择文件</span>
+
+        <button id="download-json-btn" class="btn">下载 JSON 数据</button>
+        <button id="apply-json-btn" class="btn">应用数据</button>
+        <p id="upload-status">状态：等待上传数据</p>
+    </div>
+    <div id="result-content"></div>
+
+    <script src="functions/data_management.js"></script>
+</body>
+</html>

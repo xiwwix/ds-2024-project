@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>可视化选项</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="query-content">
+        <h2>可视化选项</h2>
+        <div class="option-row">
+            <label class="option-label">显示序号</label>
+            <label class="switch">
+                <input type="checkbox" id="toggle-ids">
+                <div class="slider round"></div>
+            </label>
+        </div>
+
+        <div class="option-row">
+            <label class="option-label">结点颜色</label>
+            <div class="color-box-container">
+                <div class="color-box" data-color="rgb(255, 166, 166)" style="background-color: rgb(255, 166, 166);"></div>
+                <div class="color-box selected" data-color="rgb(255, 205, 113)" style="background-color: rgb(255, 205, 113);"></div>
+                <div class="color-box" data-color="rgb(255, 255, 168)" style="background-color: rgb(255, 255, 168);"></div>
+                <div class="color-box" data-color="rgb(168, 255, 168)" style="background-color: rgb(168, 255, 168);"></div>
+                <div class="color-box" data-color="rgb(170, 228, 255)" style="background-color: rgb(170, 228, 255);"></div>
+                <div class="color-box" data-color="rgb(255, 143, 255)" style="background-color: rgb(255, 143, 255);"></div>
+            </div>
+        </div>
+    </div>
+    <div id="result-content"></div>
+</body>
+</html>

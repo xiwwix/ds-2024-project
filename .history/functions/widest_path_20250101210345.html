@@ -1,0 +1,124 @@
+<div id="query-content">
+    <h3>信息扩散模拟</h3>
+    <label for="start-member">起点:</label>
+    <input type="text" id="start-member" placeholder="输入起点成员">
+    <label for="spread-time">传播时间:</label>
+    <input type="number" id="spread-time" placeholder="输入传播时间">
+
+    <!-- 按钮 -->
+    <div id="button-container" style="display: flex; gap: 10px; margin-top: 10px;">
+        <button id="simulate-btn">模拟</button>
+        <button id="next-step-btn">下一步</button>
+        <button id="reset-btn">重置</button>
+    </div>
+</div>
+<div id="result-content">
+    <h3>数据分析结果：</h3>
+    <div id="result">在此显示扩散模拟结果</div>
+</div>
+
+<!-- 引入扩散模拟算法 -->
+<script src="functions/simulate_ic_spread.js"></script>
+
+<script>
+    console.log("IC Spread Simulation Page Loaded!");
+
+    (function () {
+        console.log("Initializing IC Spread Simulation...");
+
+        const graphData = window.graphData;
+
+        if (!graphData || !graphData.nodes || !graphData.edges) {
+            console.error('Graph Data is not available:', graphData);
+            document.getElementById('result').innerHTML = '图数据尚未加载，请返回上传数据。';
+            return;
+        }
+
+        // 获取输入框和结果展示区域
+        const startInput = document.getElementById('start-member');
+        const timeInput = document.getElementById('spread-time');
+        const resultDiv = document.getElementById('result');
+
+        let currentTime = 0; // 当前时间步
+        let activatedNodes = new Set(); // 被激活的节点
+        let activeNodes = []; // 当前时间步激活的节点
+        let startNodeId = null; // 起点ID
+
+        // 模拟按钮点击事件
+        document.getElementById('simulate-btn').addEventListener('click', () => {
+            console.log("Simulate button clicked!");
+
+            const startMember = startInput.value.trim();
+            const spreadTime = parseInt(timeInput.value.trim());
+
+            // 输入验证
+            if (!startMember || isNaN(spreadTime)) {
+                resultDiv.innerHTML = '请输入有效的起点和传播时间。';
+                console.warn("无效输入");
+                return;
+            }
+
+            // 查找起点
+            const startNode = graphData.nodes.find(node => node.data.label === startMember);
+            if (!startNode) {
+                resultDiv.innerHTML = '找不到指定的起点，请检查输入内容。';
+                console.warn("起点未找到");
+                return;
+            }
+
+            // 初始化状态
+            startNodeId = startNode.data.id;
+            currentTime = spreadTime; // 更新当前时间
+
+            // 清空之前状态并重新开始模拟
+            window.resetSimulation();
+            const result = window.simulateICSpread(startNodeId, spreadTime, graphData);
+
+            // 显示结果
+            updateResultOutput(result, graphData);
+        });
+
+        // 下一步按钮点击事件
+        document.getElementById('next-step-btn').addEventListener('click', () => {
+            console.log("Next step button clicked!");
+
+            if (!startNodeId) {
+                resultDiv.innerHTML = '请先点击模拟按钮，进行初始模拟！';
+                return;
+            }
+
+            // 增加传播时间
+            currentTime++;
+            timeInput.value = currentTime;
+
+            // 继续扩散
+            const result = window.simulateICSpread(startNodeId, 1, graphData);
+            updateResultOutput(result, graphData);
+        });
+
+        // 重置按钮点击事件
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            console.log("Reset button clicked!");
+
+            // 重置状态和时间步
+            currentTime = 0;
+            timeInput.value = ''; // 清空传播时间输入
+            startInput.value = ''; // 清空起点输入
+
+            // 调用全局重置函数
+            window.resetSimulation();
+
+            resultDiv.innerHTML = '扩散过程已重设，请重新输入参数开始模拟！';
+        });
+
+        // 更新结果输出
+        function updateResultOutput(activatedNodes, graphData) {
+            const nodeLabels = Array.from(activatedNodes).map(id => {
+                const node = graphData.nodes.find(n => n.data.id === id);
+                return node ? node.data.label : id;
+            });
+
+            resultDiv.innerHTML = `第${currentTime}步传播节点: ${nodeLabels.join(', ')}`;
+        }
+    })();
+</script>
