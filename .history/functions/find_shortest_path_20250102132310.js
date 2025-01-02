@@ -56,6 +56,7 @@ function findShortestPath(startId, endId, graphData) {
                 p = parents[p];
             }
             const cost = distances[endId];
+            console.log("Shortest path found:", path, "cost =", cost);
             return { path, cost };
         }
 
@@ -68,6 +69,8 @@ function findShortestPath(startId, endId, graphData) {
             }
         });
     }
+
+    console.warn(`No path found from ${startId} to ${endId}`);
     return { path: [], cost: 0 };
 }
 
